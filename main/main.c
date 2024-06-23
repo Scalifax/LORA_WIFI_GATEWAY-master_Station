@@ -7,14 +7,14 @@
 #include "esp_log.h"
 #include <string.h>
 #include "nvs_flash.h"
+#include "esp_timer.h"
+
 static const char *TAG = "eth_example";
 static bool s_sta_is_connected = false;
 static bool wifi_is_connected = false;
-#define CONFIG_EXAMPLE_WIFI_SSID "NGLORA"
-#define CONFIG_EXAMPLE_WIFI_PASSWORD "NGLORAICT"
+#define CONFIG_EXAMPLE_WIFI_SSID "TELECO_2k24"
+#define CONFIG_EXAMPLE_WIFI_PASSWORD "analelealan"
 #define CONFIG_EXAMPLE_MAX_STA_CONN 4
-
-#include "esp_timer.h"
 
 uint8_t but[301];
 //uint8_t butTX[301];
@@ -50,7 +50,7 @@ static void timeout_timer_callback(void* arg)
 				// We were able to obtain the semaphore and can now access the
 				// shared resource.
 				printf("\n->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->");
-				printf("\nLORA TX TICK: %u\n", xTaskGetTickCountFromISR()*portTICK_PERIOD_MS);
+				printf("\nLORA TX TICK: %lu\n", xTaskGetTickCountFromISR()*portTICK_PERIOD_MS);
 				printf("->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->\n");
 				lora_send_packet(TXmsg.buf, TXmsg.len);
 				// We have finished accessing the shared resource.  Release the
@@ -176,7 +176,7 @@ void task_rx(void *p)
 				if(but[12]==0x12 && but[13]==0x34)
 				{
 					printf("\n<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-");
-					printf("\nLORA RX TICK: %u\n", xTaskGetTickCount()*portTICK_PERIOD_MS);
+					printf("\nLORA RX TICK: %lu\n", xTaskGetTickCount()*portTICK_PERIOD_MS);
 					printf("<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-\n");
 					esp_timer_stop(TX_timer);
 					esp_timer_start_once(TX_timer,(500e3 - (x/1200)*1e6));
@@ -286,23 +286,23 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)
 {
     switch (event_id) {
-    case SYSTEM_EVENT_STA_START:
-        printf("SYSTEM_EVENT_STA_START\r\n");
+    case WIFI_EVENT_STA_START:
+        printf("WIFI_EVENT_STA_START\r\n");
         break;
 
-    case SYSTEM_EVENT_STA_CONNECTED:
-        printf("SYSTEM_EVENT_STA_CONNECTED\r\n");
+    case WIFI_EVENT_STA_CONNECTED:
+        printf("WIFI_EVENT_STA_CONNECTED\r\n");
         wifi_is_connected = true;
 
         esp_wifi_internal_reg_rxcb(ESP_IF_WIFI_STA, (wifi_rxcb_t)pkt_wifi2eth);
         break;
 
-    case SYSTEM_EVENT_STA_GOT_IP:
-        printf("SYSTEM_EVENT_STA_GOT_IP\r\n");
+    case IP_EVENT_STA_GOT_IP:
+        printf("IP_EVENT_STA_GOT_IP\r\n");
         break;
 
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-        printf("SYSTEM_EVENT_STA_DISCONNECTED\r\n");
+    case WIFI_EVENT_STA_DISCONNECTED:
+        printf("WIFI_EVENT_STA_DISCONNECTED\r\n");
         wifi_is_connected = false;
         esp_wifi_internal_reg_rxcb(ESP_IF_WIFI_STA, NULL);
         esp_wifi_connect();
@@ -327,7 +327,7 @@ static void initialize_wifi(void)
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, wifi_event_handler, NULL));
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(tcpip_adapter_clear_default_wifi_handlers());
+    ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 
     wifi_config_t wifi_config = {

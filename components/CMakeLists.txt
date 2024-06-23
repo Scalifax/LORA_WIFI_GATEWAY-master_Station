@@ -4,5 +4,5 @@ idf_component_register(
 				
 			INCLUDE_DIRS
 				"lora/include"
-			
+				"/home/alberti/esp/v5.0.6/esp-idf/components/driver/include"
 			)

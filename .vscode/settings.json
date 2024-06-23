@@ -1,5 +1,16 @@
 {
     "idf.adapterTargetName": "esp32",
     "idf.flashType": "UART",
-    "idf.port": "/dev/ttyUSB0"
+    "idf.port": "/dev/ttyUSB0",
+    "files.associations": {
+        "sdkconfig.h": "c",
+        "string.h": "c",
+        "lora.h": "c",
+        "stdio.h": "c",
+        "esp_wifi.h": "c",
+        "esp_wifi_default.h": "c",
+        "esp_netif.h": "c",
+        "esp_netif_ip_addr.h": "c",
+        "endian.h": "c"
+    }
 }
