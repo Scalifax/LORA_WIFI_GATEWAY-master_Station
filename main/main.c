@@ -13,7 +13,7 @@ static const char *TAG = "eth_example";
 static bool s_sta_is_connected = false;
 static bool wifi_is_connected = false;
 #define CONFIG_EXAMPLE_WIFI_SSID "TELECO_2k24"
-#define CONFIG_EXAMPLE_WIFI_PASSWORD "analelealan"
+#define CONFIG_EXAMPLE_WIFI_PASSWORD ""
 #define CONFIG_EXAMPLE_MAX_STA_CONN 4
 
 uint8_t but[301];
